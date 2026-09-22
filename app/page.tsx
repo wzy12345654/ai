@@ -16,6 +16,7 @@ const seedTitles = [
 ];
 
 const styles = ["杂志拼贴", "生活方式", "极简留白", "复古胶片"];
+type SavedArticle = { id: number; title: string; payload: { copy: string; coverHistory: Array<{ id: number; images: string[]; ratio: string; style: string }>; bodyImages: string[] }; updatedAt: string };
 
 export default function Page() {
   const [topic, setTopic] = useState("");
