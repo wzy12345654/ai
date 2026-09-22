@@ -41,6 +41,29 @@ export default function Page() {
 
   const currentTitle = titles[selected]?.title ?? seedTitles[0].title;
   const wordCount = useMemo(() => copy.replace(/\s/g, "").length, [copy]);
+  const latestCovers = coverHistory[0]?.images ?? [];
+  const articlePayload = { title: currentTitle, copy, coverHistory, bodyImages };
+
+  useEffect(() => {
+    fetch("/api/articles").then((res) => res.ok ? res.json() : []).then(setSavedArticles).catch(() => undefined);
+  }, []);
+
+  async function saveArticle() {
+    setSaveState("保存中…");
+    const method = currentArticleId ? "PUT" : "POST";
+    const url = currentArticleId ? `/api/articles/${currentArticleId}` : "/api/articles";
+    const response = await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ title: currentTitle, payload: articlePayload }) });
+    if (response.ok) {
+      const saved = await response.json();
+      setCurrentArticleId(saved.id);
+      setSavedArticles((items) => [saved, ...items.filter((item) => item.id !== saved.id)]);
+      setSaveState("已保存 · " + new Date().toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit" }));
+    } else setSaveState("保存失败，请重试");
+  }
+
+  function loadArticle(article: SavedArticle) {
+    setCurrentArticleId(article.id); setCopy(article.payload.copy); setCoverHistory(article.payload.coverHistory ?? []); setBodyImages(article.payload.bodyImages ?? []); setShowLibrary(false); setShowArticle(true); setActiveTab("titles");
+  }
 
   async function generateTitles() {
     if (!topic.trim()) return;
