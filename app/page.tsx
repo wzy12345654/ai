@@ -25,7 +25,11 @@ export default function Page() {
   const [activeTab, setActiveTab] = useState<"titles" | "copy" | "cover" | "images">("titles");
   const [style, setStyle] = useState(styles[0]);
   const [coverRatio, setCoverRatio] = useState("9:16");
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [coverHistory, setCoverHistory] = useState<Array<{ id: number; images: string[]; ratio: string; style: string }>>([]);
+  const [bodyImages, setBodyImages] = useState<string[]>([]);
+  const [bodyCount, setBodyCount] = useState("3");
+  const [bodyRatio, setBodyRatio] = useState("1:1");
+  const [bodyResolution, setBodyResolution] = useState("1K");
   const { loading: textLoading, error: textError, run: runText } = useInferenceRun();
   const { loading: imageLoading, error: imageError, run: runImage } = useInferenceRun();
 
