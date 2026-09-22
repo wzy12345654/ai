@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useInferenceRun } from "@/lib/use-inference-run";
 
 const TEXT_APP = "anthropic/claude-haiku-4-5";
