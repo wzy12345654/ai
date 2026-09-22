@@ -67,13 +67,31 @@ export default function Page() {
 
   async function generateCover() {
     try {
-      const task = await runImage(IMAGE_APP, { prompt: `小红书爆款封面，标题“${currentTitle}”，${style}风格，强视觉冲突，中文排版留出标题区域，${coverRatio}比例`, aspect_ratio: coverRatio, n: 1 });
-      const output = task.output as { images?: string[] } | null;
-      setImageUrl(output?.images?.[0] ?? null);
+      const task = await runImage(IMAGE_APP, { prompt: `小红书爆款封面，标题“${currentTitle}”，${style}风格，强视觉冲突，中文排版留出标题区域，${coverRatio}比例。请生成一张完整封面。`, aspect_ratio: coverRatio, n: 1, quality: "low", resolution: "1K" });
+      const output = task.output as { images?: string[]; image?: string } | null;
+      const generated = output?.images?.filter(Boolean) ?? (output?.image ? [output.image] : []);
+      if (generated.length) setCoverHistory((history) => [{ id: Date.now(), images: generated, ratio: coverRatio, style }, ...history]);
     } catch {
-      setImageUrl(null);
+      // 保留历史生成结果，避免一次失败清空画布
     }
     setActiveTab("cover");
+  }
+
+  async function generateBodyImages() {
+    try {
+      const count = Number(bodyCount);
+      const generated: string[] = [];
+      for (let i = 0; i < count; i += 1) {
+        const task = await runImage(IMAGE_APP, { prompt: `小红书正文配图，第 ${i + 1} 张。标题“${currentTitle}”，正文内容：${copy}。${style}风格，画面不要添加文字，突出生活化细节与情绪氛围。`, aspect_ratio: bodyRatio, n: 1, quality: "low", resolution: bodyResolution });
+        const output = task.output as { images?: string[]; image?: string } | null;
+        const url = output?.images?.[0] ?? output?.image;
+        if (url) generated.push(url);
+      }
+      if (generated.length) setBodyImages((history) => [...generated, ...history]);
+    } catch {
+      // 保留已有正文配图
+    }
+    setActiveTab("images");
   }
 
   return (
