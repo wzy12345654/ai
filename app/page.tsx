@@ -128,7 +128,7 @@ export default function Page() {
       <header className="topbar">
         <div className="brand"><span className="brand-mark">◎</span><span>爆文实验室</span><span className="beta">BETA</span></div>
         <nav><button className="nav-active" onClick={() => { setShowArticle(false); setShowLibrary(false); }}>创作台</button><button>灵感库</button><button onClick={() => setShowLibrary(true)}>我的作品</button></nav>
-        <div className="top-actions"><button className="icon-button">⌘</button><button className="avatar">林</button></div>
+        <div className="top-actions"><button className="icon-button" onClick={() => setShowArticle(true)} title="查看完整文章">▤</button><button className="avatar">林</button></div>
       </header>
 
       <section className="hero"><div><p className="eyebrow">XIAOHONGSHU CONTENT STUDIO</p><h1>把灵感，变成<br /><em>让人停下来的内容。</em></h1><p className="hero-sub">从一个关键词开始，生成有态度、有钩子、有人味的爆款内容。</p></div><div className="hero-note"><span>●</span><div><strong>今日灵感</strong><p>真正的松弛感，是你不再向任何人证明自己。</p></div></div></section>
