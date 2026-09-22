@@ -31,6 +31,11 @@ export default function Page() {
   const [bodyCount, setBodyCount] = useState("3");
   const [bodyRatio, setBodyRatio] = useState("1:1");
   const [bodyResolution, setBodyResolution] = useState("1K");
+  const [showArticle, setShowArticle] = useState(false);
+  const [showLibrary, setShowLibrary] = useState(false);
+  const [savedArticles, setSavedArticles] = useState<SavedArticle[]>([]);
+  const [currentArticleId, setCurrentArticleId] = useState<number | null>(null);
+  const [saveState, setSaveState] = useState("尚未保存");
   const { loading: textLoading, error: textError, run: runText } = useInferenceRun();
   const { loading: imageLoading, error: imageError, run: runImage } = useInferenceRun();
 
