@@ -127,7 +127,7 @@ export default function Page() {
     <main className="app-shell">
       <header className="topbar">
         <div className="brand"><span className="brand-mark">◎</span><span>爆文实验室</span><span className="beta">BETA</span></div>
-        <nav><button className="nav-active">创作台</button><button>灵感库</button><button>我的作品</button></nav>
+        <nav><button className="nav-active" onClick={() => { setShowArticle(false); setShowLibrary(false); }}>创作台</button><button>灵感库</button><button onClick={() => setShowLibrary(true)}>我的作品</button></nav>
         <div className="top-actions"><button className="icon-button">⌘</button><button className="avatar">林</button></div>
       </header>
 
