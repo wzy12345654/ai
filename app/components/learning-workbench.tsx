@@ -25,6 +25,7 @@ export default function LearningWorkbench() {
   const [downloadUrl, setDownloadUrl] = useState("");
   const [copied, setCopied] = useState(false);
   const [localError, setLocalError] = useState("");
+  const [extractPhase, setExtractPhase] = useState<"idle" | "uploading" | "recognizing">("idle");
   const stt = useInferenceRun();
 
   useEffect(() => () => { if (downloadUrl) URL.revokeObjectURL(downloadUrl); }, [downloadUrl]);
