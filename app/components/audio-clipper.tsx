@@ -229,7 +229,7 @@ export default function AudioClipper({ onClipReady, onClipCleared }: { onClipRea
       const blob = await response.blob();
       const url = URL.createObjectURL(blob);
       resultUrlRef.current = url;
-      const readyResult: ClipReadyResult = { url, blob, name: safeDownloadName(file.name), start, end, durationLabel: formatTime(end - start), formatLabel: "MP3" };
+      const readyResult: ClipReadyResult = { url, blob, name: safeDownloadName(file.name), mimeType: "audio/mpeg", start, end, durationLabel: formatTime(end - start), formatLabel: "MP3" };
       setResult(readyResult);
       onClipReady?.(readyResult);
     } catch (reason) {
