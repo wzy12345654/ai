@@ -2,18 +2,15 @@ type FileRecord = { uri?: string; upload_url?: string };
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-async function waitUntilReadable(uri: string, proxyUrl: string) {
-  // 必须通过与模型相同的推理代理读取，直接 HEAD 可能被 CDN 缓存误判为可用。
+async function waitUntilReadable(uri: string) {
+  // 读取一小段真实媒体内容；HEAD 在 CDN 层可能成功但模型随后 GET 仍得到 404。
   for (let attempt = 0; attempt < 12; attempt++) {
     try {
-      const response = await fetch(proxyUrl, {
+      const response = await fetch(uri, {
         method: "GET",
         credentials: "include",
         cache: "no-store",
-        headers: {
-          "x-inf-target-url": uri,
-          Range: "bytes=0-0",
-        },
+        headers: { Range: "bytes=0-0" },
       });
       if (response.ok || response.status === 206) {
         await response.body?.cancel();
