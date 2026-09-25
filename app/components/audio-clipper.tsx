@@ -204,6 +204,7 @@ export default function AudioClipper({ onClipReady, onClipCleared }: { onClipRea
       start: 0,
       end: duration,
       durationLabel: formatTime(duration),
+      formatLabel: (file.name.split(".").pop() || "audio").toUpperCase(),
     };
     setResult(readyResult);
     onClipReady?.(readyResult);
