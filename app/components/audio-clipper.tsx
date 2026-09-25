@@ -201,6 +201,7 @@ export default function AudioClipper({ onClipReady, onClipCleared }: { onClipRea
       url,
       blob: file,
       name: file.name,
+      mimeType: file.type || "application/octet-stream",
       start: 0,
       end: duration,
       durationLabel: formatTime(duration),
