@@ -12,6 +12,7 @@ const nextConfig: NextConfig = {
   experimental: {
     proxyClientMaxBodySize: "100mb",
   },
+  serverExternalPackages: ["@ffmpeg-installer/ffmpeg"],
 };
 
 export default nextConfig;
