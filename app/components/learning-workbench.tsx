@@ -66,7 +66,9 @@ export default function LearningWorkbench() {
       setDownloadUrl(url);
     } catch (reason) {
       // 推理错误由 useInferenceRun 保存；上传与本地校验错误在这里展示。
-      if (!stt.error) setLocalError(reason instanceof Error ? reason.message : "英文提取失败，请稍后重试。");
+      setLocalError(reason instanceof Error ? reason.message : "英文提取失败，请稍后重试。");
+    } finally {
+      setExtractPhase("idle");
     }
   }
 
