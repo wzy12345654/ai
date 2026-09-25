@@ -4,6 +4,7 @@ import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { extname, join } from "node:path";
 import { NextResponse } from "next/server";
+import ffmpegInstaller from "@ffmpeg-installer/ffmpeg";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
