@@ -13,6 +13,19 @@ const MAX_BYTES = 100 * 1024 * 1024;
 const MAX_DURATION = 60 * 60;
 const EXTENSIONS = new Set([".mp3", ".wav", ".m4a", ".aac", ".ogg", ".oga", ".webm", ".flac"]);
 
+function getFfmpegPath() {
+  if (process.env.FFMPEG_PATH) return process.env.FFMPEG_PATH;
+  try {
+    // 动态 require 避免 Next/Turbopack 静态分析该包内部按平台选择二进制的逻辑。
+    const runtimeRequire = createRequire(import.meta.url);
+    const installer = runtimeRequire("@ffmpeg-installer/ffmpeg") as { path?: string };
+    if (installer.path) return installer.path;
+  } catch {
+    // Docker 生产镜像通过 apk 安装 FFmpeg，回退到 PATH。
+  }
+  return "ffmpeg";
+}
+
 function run(command: string, args: string[], timeoutMs = 180_000) {
   return new Promise<void>((resolve, reject) => {
     const child = spawn(command, args, { stdio: ["ignore", "ignore", "pipe"] });
