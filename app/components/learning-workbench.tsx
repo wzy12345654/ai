@@ -41,6 +41,7 @@ export default function LearningWorkbench() {
     if (downloadUrl) URL.revokeObjectURL(downloadUrl);
     setTranscript("");
     setDownloadUrl("");
+    setLocalError("");
     setClip(result);
     window.setTimeout(() => extractionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 120);
   }
