@@ -192,11 +192,28 @@ export default function AudioClipper({ onClipReady, onClipCleared }: { onClipRea
 
   function resetSelection() { updateSelection(0, duration); wavesurferRef.current?.seekTo(0); }
 
+  function useFullAudio() {
+    if (!file || !duration) return;
+    setError("");
+    clearResult(false);
+    const url = objectUrlRef.current || URL.createObjectURL(file);
+    const readyResult: ClipReadyResult = {
+      url,
+      blob: file,
+      name: file.name,
+      start: 0,
+      end: duration,
+      durationLabel: formatTime(duration),
+    };
+    setResult(readyResult);
+    onClipReady?.(readyResult);
+  }
+
   async function exportClip() {
     if (!file || end - start < MIN_DURATION) return;
     setError("");
     setExporting(true);
-    clearResult();
+    clearResult(false);
     try {
       const body = new FormData();
       body.append("audio", file);
