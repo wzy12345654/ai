@@ -33,6 +33,7 @@ export default function LearningWorkbench() {
     if (downloadUrl) URL.revokeObjectURL(downloadUrl);
     setDownloadUrl("");
     setTranscript("");
+    setLocalError("");
     setClip(null);
   }
 
