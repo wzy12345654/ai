@@ -83,7 +83,7 @@ export default function LearningWorkbench() {
 
     <section ref={extractionRef} className={`extraction-card ${clip ? "available" : "disabled"}`} aria-labelledby="extract-title">
       <div className="section-title-row"><div><span className="section-kicker">STEP 02 · 当前开发阶段</span><h2 id="extract-title">提取英文内容</h2><p>从剪切后的片段中识别英文，你可以校对、复制并下载文本。</p></div><span className={`stage-badge ${extractionDone ? "complete" : ""}`}>{extractionDone ? "已完成 ✓" : clip ? "可开始" : "等待音频剪切"}</span></div>
-      {!clip ? <div className="extract-locked"><span>02</span><strong>先完成上方音频剪切</strong><p>剪切结果会自动进入这里，不会识别原始长音频。</p></div> : <>
+      {!clip ? <div className="extract-locked"><span>02</span><strong>先在上方准备学习音频</strong><p>你可以导出选区，也可以跳过剪切直接使用完整音频。</p></div> : <>
         <div className="clip-summary"><div><span className="summary-icon">♫</span><div><small>准备识别的学习片段</small><strong>{clip.name}</strong><span>{clip.durationLabel} · MP3</span></div></div><audio controls src={clip.url} /></div>
         {!extractionDone && <div className="extract-start"><div className="extract-illustration">Aa<span>EN</span></div><div><strong>{stt.loading ? "正在听取并整理英文内容…" : "让我们听懂这段英语"}</strong><p>{stt.loading ? "识别时间取决于音频长度，请保持页面打开。" : "系统只会处理你刚刚剪切的片段。识别完成后可直接校对。"}</p></div><button className="primary-button extract-button" type="button" onClick={extractContent} disabled={stt.loading}>{stt.loading ? <><i className="button-spinner" /> 提取中…</> : <>开始提取英文 <b>→</b></>}</button></div>}
         {stt.error && <div className="error-message" role="alert">!&nbsp; {stt.error}</div>}
