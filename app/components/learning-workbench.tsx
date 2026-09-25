@@ -59,8 +59,9 @@ export default function LearningWorkbench() {
       const url = URL.createObjectURL(new Blob([text], { type: "text/plain;charset=utf-8" }));
       if (downloadUrl) URL.revokeObjectURL(downloadUrl);
       setDownloadUrl(url);
-    } catch {
-      // useInferenceRun 已记录服务错误；本地校验错误由下方兜底状态呈现。
+    } catch (reason) {
+      // 推理错误由 useInferenceRun 保存；上传与本地校验错误在这里展示。
+      if (!stt.error) setLocalError(reason instanceof Error ? reason.message : "英文提取失败，请稍后重试。");
     }
   }
 
