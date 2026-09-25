@@ -11,6 +11,7 @@
     "db:migrate": "drizzle-kit migrate"
   },
   "dependencies": {
+    "@ffmpeg-installer/ffmpeg": "^1.1.0",
     "@inferencesh/sdk": "0.6.30",
     "drizzle-kit": "0.31.4",
     "drizzle-orm": "0.44.2",
