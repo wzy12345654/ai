@@ -3,21 +3,24 @@ type FileRecord = { uri?: string; upload_url?: string };
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 async function waitUntilReadable(uri: string) {
-  // 读取一小段真实媒体内容；HEAD 在 CDN 层可能成功但模型随后 GET 仍得到 404。
+  // PUT 完成后媒体入口存在短暂同步窗口。浏览器无法跨域读取其最终 OSS 重定向，
+  // 因此只确认媒体入口不再返回 404，再给后端留一小段传播时间。
   for (let attempt = 0; attempt < 12; attempt++) {
     try {
       const response = await fetch(uri, {
         method: "GET",
         credentials: "include",
         cache: "no-store",
-        headers: { Range: "bytes=0-0" },
+        redirect: "manual",
       });
-      if (response.ok || response.status === 206) {
+      if (response.status !== 404 && response.status !== 503) {
         await response.body?.cancel();
+        await sleep(1200);
         return;
       }
     } catch {
-      // 对象存储与媒体代理同步期间继续轮询。
+      // 跨域重定向在浏览器中可能表现为 fetch 失败；入口已命中时稍等后继续。
+      if (attempt >= 2) { await sleep(1200); return; }
     }
     await sleep(Math.min(750 * (attempt + 1), 4000));
   }
