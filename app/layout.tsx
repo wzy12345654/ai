@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "LinguaFlow · 英语听力学习工作台",
-  description: "剪切英语音频，逐步制作属于你的双语听力课程。",
+  description: "剪切英语音频、提取英文内容，逐步制作属于你的双语听力课程。",
 };
 
 export default function RootLayout({
