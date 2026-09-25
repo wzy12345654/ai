@@ -43,7 +43,8 @@ export async function uploadFileThroughProxy(file: File): Promise<string> {
 
   // 不在浏览器探测媒体 URL：最终 OSS 重定向未开放 CORS，会制造多条无意义的
   // 控制台错误。PUT 已成功后仅留出对象存储传播时间，再把最终公开地址交给模型。
-  await sleep(1800);
+  // 对象需要在 R2 与模型运行区可见后才能被下载；实测 1~2 秒仍可能 404。
+  await sleep(10_000);
   if (record.remote_path) {
     return `https://luffy-agent-platform.oss-cn-beijing.aliyuncs.com/inference-media/${record.remote_path}`;
   }
