@@ -64,10 +64,11 @@ export default function AudioClipper({ onClipReady, onClipCleared }: { onClipRea
     if (resultUrlRef.current) URL.revokeObjectURL(resultUrlRef.current);
   }, []);
 
-  function clearResult() {
+  function clearResult(notify = true) {
     if (resultUrlRef.current) URL.revokeObjectURL(resultUrlRef.current);
     resultUrlRef.current = null;
     setResult(null);
+    if (notify) onClipCleared?.();
   }
 
   function updateSelection(nextStart: number, nextEnd: number, updateRegion = true) {
