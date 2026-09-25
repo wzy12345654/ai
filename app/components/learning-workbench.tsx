@@ -57,7 +57,17 @@ export default function LearningWorkbench() {
       const audioFile = new File([clip.blob], clip.name, { type: clip.mimeType });
       const audioUri = await uploadFileThroughProxy(audioFile);
       setExtractPhase("recognizing");
-      const task = await stt.run(STT_APP, { audio: audioUri });
+      let task;
+      try {
+        task = await stt.run(STT_APP, { audio: audioUri, language_code: "eng" });
+      } catch (reason) {
+        // 对象存储跨区域传播偶尔会让模型首次下载得到 404；同一文件等待后重试一次。
+        if (!(reason instanceof Error) || !reason.message.includes("Error downloading URL")) throw reason;
+        setLocalError("音频仍在同步，正在自动重试识别…");
+        await new Promise((resolve) => window.setTimeout(resolve, 12_000));
+        setLocalError("");
+        task = await stt.run(STT_APP, { audio: audioUri, language_code: "eng" });
+      }
       const text = String((task.output as { text?: string } | null)?.text || "").trim();
       if (!text) throw new Error("没有识别到英文内容，请确认片段中有人声后重试。");
       setTranscript(text);
