@@ -52,9 +52,11 @@ export default function LearningWorkbench() {
   async function extractContent() {
     if (!clip) return;
     setLocalError("");
+    setExtractPhase("uploading");
     try {
       const audioFile = new File([clip.blob], clip.name, { type: clip.mimeType });
       const audioUri = await uploadFileThroughProxy(audioFile);
+      setExtractPhase("recognizing");
       const task = await stt.run(STT_APP, { audio: audioUri });
       const text = String((task.output as { text?: string } | null)?.text || "").trim();
       if (!text) throw new Error("没有识别到英文内容，请确认片段中有人声后重试。");
