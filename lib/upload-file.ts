@@ -1,5 +1,21 @@
 type FileRecord = { uri?: string; upload_url?: string };
 
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+async function waitUntilReadable(uri: string) {
+  // 对象存储 PUT 成功后，媒体代理可能需要短暂时间同步；避免推理任务立即读取时得到 404。
+  for (let attempt = 0; attempt < 10; attempt++) {
+    try {
+      const response = await fetch(uri, { method: "HEAD", credentials: "include", cache: "no-store" });
+      if (response.ok) return;
+    } catch {
+      // 同步期间继续轮询。
+    }
+    await sleep(500 * (attempt + 1));
+  }
+  throw new Error("音频上传后暂时无法读取，请稍后重试。");
+}
+
 /**
  * 通过 luffy proxy 调 inference.sh /files 拿预签名 upload_url, 再浏览器端直传 R2.
  * 返回 inference 侧识别的 uri (传给 runInference 的 image/audio 等 file 字段).
