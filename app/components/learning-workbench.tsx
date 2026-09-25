@@ -85,6 +85,9 @@ export default function LearningWorkbench() {
   }
 
   const extractionDone = Boolean(transcript.trim());
+  const extracting = extractPhase !== "idle" || stt.loading;
+  const phaseTitle = extractPhase === "uploading" ? "正在上传并准备音频…" : "正在识别英文内容…";
+  const phaseDetail = extractPhase === "uploading" ? "正在将音频安全传送到识别服务，请不要关闭页面。" : "识别任务正在运行，较长音频可能需要几分钟。";
   return <>
     <nav className="stage-nav" aria-label="学习音频制作流程">{stages.map((stage, index) => {
       const state = index === 0 ? (clip ? "complete" : "active") : index === 1 ? (clip ? "active" : "waiting") : "locked";
