@@ -3,6 +3,7 @@ import { randomUUID } from "node:crypto";
 import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { extname, join } from "node:path";
+import { createRequire } from "node:module";
 import { NextResponse } from "next/server";
 
 export const runtime = "nodejs";
