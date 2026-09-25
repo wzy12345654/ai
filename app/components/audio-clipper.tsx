@@ -210,7 +210,9 @@ export default function AudioClipper({ onClipReady, onClipCleared }: { onClipRea
       const blob = await response.blob();
       const url = URL.createObjectURL(blob);
       resultUrlRef.current = url;
-      setResult({ url, name: safeDownloadName(file.name), start, end });
+      const readyResult: ClipReadyResult = { url, blob, name: safeDownloadName(file.name), start, end, durationLabel: formatTime(end - start) };
+      setResult(readyResult);
+      onClipReady?.(readyResult);
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : "剪切失败，请稍后重试。");
     } finally { setExporting(false); }
