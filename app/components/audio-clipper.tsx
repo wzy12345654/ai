@@ -9,7 +9,7 @@ const MAX_DURATION = 60 * 60;
 const MIN_DURATION = 0.1;
 const ALLOWED_EXTENSIONS = ["mp3", "wav", "m4a", "aac", "ogg", "webm", "flac"];
 
-export type ClipReadyResult = { url: string; blob: Blob; name: string; start: number; end: number; durationLabel: string };
+export type ClipReadyResult = { url: string; blob: Blob; name: string; start: number; end: number; durationLabel: string; formatLabel: string };
 type ClipResult = ClipReadyResult;
 
 function formatTime(seconds: number) {
