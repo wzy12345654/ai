@@ -1,4 +1,4 @@
-type FileRecord = { uri?: string; upload_url?: string };
+type FileRecord = { uri?: string; upload_url?: string; remote_path?: string };
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
