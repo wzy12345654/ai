@@ -236,7 +236,7 @@ export default function AudioClipper({ onClipReady, onClipCleared }: { onClipRea
   }
 
   return <section className="clipper-card" aria-labelledby="clipper-title">
-    <div className="section-title-row"><div><span className="section-kicker">STEP 01 · 当前阶段</span><h2 id="clipper-title">选取你的学习片段</h2><p>上传音频，留下今天真正想听懂的部分。</p></div><span className={`stage-badge ${result ? "complete" : ""}`}>{result ? "已完成 ✓" : "进行中"}</span></div>
+    <div className="section-title-row"><div><span className="section-kicker">STEP 01 · 可选剪切</span><h2 id="clipper-title">准备你的学习音频</h2><p>需要时选取片段；不需要剪切，也可以直接使用完整音频。</p></div><span className={`stage-badge ${result ? "complete" : ""}`}>{result ? "已完成 ✓" : "进行中"}</span></div>
 
     {!file ? <div className={`dropzone ${dragging ? "dragging" : ""}`} role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") inputRef.current?.click(); }} onClick={() => inputRef.current?.click()} onDragEnter={(e) => { e.preventDefault(); setDragging(true); }} onDragOver={(e) => e.preventDefault()} onDragLeave={() => setDragging(false)} onDrop={onDrop}>
       <input ref={inputRef} className="file-input" type="file" accept="audio/*,.mp3,.wav,.m4a,.aac,.ogg,.flac" onChange={chooseFile} />
