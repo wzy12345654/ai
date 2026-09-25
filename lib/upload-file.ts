@@ -62,6 +62,6 @@ export async function uploadFileThroughProxy(file: File): Promise<string> {
     body: file,
   });
   if (!put.ok) throw new Error(`上传文件失败: ${put.statusText || put.status}`);
-  await waitUntilReadable(record.uri, proxyUrl);
+  await waitUntilReadable(record.uri);
   return record.uri;
 }
