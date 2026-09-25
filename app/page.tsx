@@ -4,7 +4,7 @@ export default function Page() {
   return <main className="site-shell">
     <header className="topbar"><a className="brand" href="#top" aria-label="LinguaFlow 首页"><span className="brand-mark">L</span><span><b>Lingua</b>Flow</span></a><div className="top-note"><span className="status-dot" />英语听力学习工作台</div></header>
 
-    <section className="hero" id="top"><div className="hero-copy"><div className="eyebrow"><span>LISTEN</span><i /> <span>UNDERSTAND</span><i /> <span>LEARN</span></div><h1>听见声音，也看清<br /><em>每一句英文</em></h1><p>剪下真正想学的片段，再把声音变成可以校对、保存和反复学习的英文原文。</p></div><div className="hero-note"><span>当前开放</span><strong>剪切音频 + 提取内容</strong><p>先确定学习片段<br />再识别英文并下载文本</p></div></section>
+    <section className="hero" id="top"><div className="hero-copy"><div className="eyebrow"><span>LISTEN</span><i /> <span>UNDERSTAND</span><i /> <span>LEARN</span></div><h1>听见声音，也看清<br /><em>每一句英文</em></h1><p>按需选取学习片段，或直接使用完整音频，再生成可以校对、保存和反复学习的英文原文。</p></div><div className="hero-note"><span>当前开放</span><strong>可选剪切 + 提取内容</strong><p>使用选区或完整音频<br />识别英文并下载文本</p></div></section>
 
     <LearningWorkbench />
 
