@@ -48,8 +48,9 @@ export default function LearningWorkbench() {
 
   async function extractContent() {
     if (!clip) return;
+    setLocalError("");
     try {
-      const audioFile = new File([clip.blob], clip.name, { type: "audio/mpeg" });
+      const audioFile = new File([clip.blob], clip.name, { type: clip.mimeType });
       const audioUri = await uploadFileThroughProxy(audioFile);
       const task = await stt.run(STT_APP, { audio: audioUri });
       const text = String((task.output as { text?: string } | null)?.text || "").trim();
