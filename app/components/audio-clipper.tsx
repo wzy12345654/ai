@@ -252,6 +252,6 @@ export default function AudioClipper({ onClipReady, onClipCleared }: { onClipRea
       </>}
     </>}
     {error && <div className="error-message" role="alert">!&nbsp; {error}</div>}
-    {result && <div className="result-box"><div className="result-check">✓</div><div className="result-main"><span className="result-label">剪切完成 · 仅保留在当前页面</span><strong>{result.name}</strong><span>{formatTime(result.start)} — {formatTime(result.end)} · 共 {formatTime(result.end - result.start)}</span><audio controls src={result.url} /></div><div className="result-actions"><a href={result.url} download={result.name}>↓ 下载剪切音频</a><button type="button" onClick={() => { clearResult(); window.scrollTo({ top: 330, behavior: "smooth" }); }}>重新剪切</button></div></div>}
+    {result && <div className="result-box"><div className="result-check">✓</div><div className="result-main"><span className="result-label">{result.blob === file ? "已使用完整音频 · 可进入下一步" : "剪切完成 · 可进入下一步"}</span><strong>{result.name}</strong><span>{formatTime(result.start)} — {formatTime(result.end)} · 共 {formatTime(result.end - result.start)}</span><audio controls src={result.url} /></div><div className="result-actions">{result.blob !== file && <a href={result.url} download={result.name}>↓ 下载剪切音频</a>}<button type="button" onClick={() => { clearResult(); window.scrollTo({ top: 330, behavior: "smooth" }); }}>重新选择</button></div></div>}
   </section>;
 }
