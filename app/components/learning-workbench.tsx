@@ -44,6 +44,7 @@ export default function LearningWorkbench() {
     setTranscript("");
     setDownloadUrl("");
     setLocalError("");
+    setExtractPhase("idle");
     setClip(result);
     window.setTimeout(() => extractionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 120);
   }
