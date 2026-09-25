@@ -35,6 +35,7 @@ export default function LearningWorkbench() {
     setDownloadUrl("");
     setTranscript("");
     setLocalError("");
+    setExtractPhase("idle");
     setClip(null);
   }
 
