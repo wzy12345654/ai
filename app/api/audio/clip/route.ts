@@ -46,7 +46,7 @@ export async function POST(request: Request) {
     const inputPath = join(directory, `${randomUUID()}${EXTENSIONS.has(extension) ? extension : ".audio"}`);
     const outputPath = join(directory, `${randomUUID()}.mp3`);
     await writeFile(inputPath, Buffer.from(await audio.arrayBuffer()));
-    await run("ffmpeg", ["-hide_banner", "-loglevel", "error", "-ss", start.toFixed(3), "-i", inputPath, "-t", (end - start).toFixed(3), "-vn", "-map_metadata", "-1", "-codec:a", "libmp3lame", "-q:a", "3", "-y", outputPath]);
+    await run(ffmpegInstaller.path, ["-hide_banner", "-loglevel", "error", "-ss", start.toFixed(3), "-i", inputPath, "-t", (end - start).toFixed(3), "-vn", "-map_metadata", "-1", "-codec:a", "libmp3lame", "-q:a", "3", "-y", outputPath]);
     const output = await readFile(outputPath);
     return new Response(output, { status: 200, headers: { "Content-Type": "audio/mpeg", "Content-Disposition": "attachment; filename=learning-clip.mp3", "Content-Length": String(output.byteLength), "Cache-Control": "no-store" } });
   } catch (error) {
