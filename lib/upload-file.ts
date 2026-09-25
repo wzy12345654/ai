@@ -66,5 +66,10 @@ export async function uploadFileThroughProxy(file: File): Promise<string> {
   });
   if (!put.ok) throw new Error(`上传文件失败: ${put.statusText || put.status}`);
   await waitUntilReadable(record.uri);
+  // 媒体代理 URL 会再 302 到 OSS，部分上游下载器不跟随该跳转并误报 404。
+  // 直接返回模型可公开读取的最终对象地址，避免识别端的重定向兼容问题。
+  if (record.remote_path) {
+    return `https://luffy-agent-platform.oss-cn-beijing.aliyuncs.com/inference-media/${record.remote_path}`;
+  }
   return record.uri;
 }
