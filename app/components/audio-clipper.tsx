@@ -21,6 +21,7 @@ function formatTime(seconds: number) {
 function parseTime(value: string) {
   const text = value.trim();
   if (/^\d+(\.\d+)?$/.test(text)) return Number(text);
+  if (!/^\d+(?::\d+(?:\.\d+)?){1,2}$/.test(text)) return Number.NaN;
   const parts = text.split(":").map(Number);
   if (parts.some((part) => !Number.isFinite(part))) return Number.NaN;
   if (parts.length === 2) return parts[0] * 60 + parts[1];
