@@ -4,6 +4,9 @@
 
 FROM node:20-alpine
 
+# 音频剪切、统一转码与精确边界导出。
+RUN apk add --no-cache ffmpeg
+
 WORKDIR /app
 
 # 启用 corepack + pnpm; 用 pnpm 而不是 npm, 跟 create-next-app 生成的 lockfile 对齐.
