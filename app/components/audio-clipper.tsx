@@ -9,7 +9,8 @@ const MAX_DURATION = 60 * 60;
 const MIN_DURATION = 0.1;
 const ALLOWED_EXTENSIONS = ["mp3", "wav", "m4a", "aac", "ogg", "webm", "flac"];
 
-type ClipResult = { url: string; name: string; start: number; end: number };
+export type ClipReadyResult = { url: string; blob: Blob; name: string; start: number; end: number; durationLabel: string };
+type ClipResult = ClipReadyResult;
 
 function formatTime(seconds: number) {
   if (!Number.isFinite(seconds)) return "00:00.0";
@@ -34,7 +35,7 @@ function safeDownloadName(name: string) {
   return `${base}-clip.mp3`;
 }
 
-export default function AudioClipper() {
+export default function AudioClipper({ onClipReady, onClipCleared }: { onClipReady?: (result: ClipReadyResult) => void; onClipCleared?: () => void }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const waveRef = useRef<HTMLDivElement>(null);
   const wavesurferRef = useRef<WaveSurfer | null>(null);
