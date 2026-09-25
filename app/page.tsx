@@ -1,95 +1,25 @@
-"use client";
+import AudioClipper from "./components/audio-clipper";
 
-import { useRef, useState } from "react";
-import { useInferenceRun } from "@/lib/use-inference-run";
-import { uploadFileThroughProxy } from "@/lib/upload-file";
-
-const STT_APP = "elevenlabs/stt";
-const TRANSLATE_APP = "anthropic/claude-haiku-4-5";
-const TRANSLATE_PROMPT = `你是专业英语翻译助手。请将输入的英文转写内容翻译为自然、准确、通顺的简体中文。只输出 JSON，不要 markdown 代码块，格式为 {"translation":"中文翻译"}。保留原文的段落结构和说话语气，不要添加解释。`;
-
-type View = { id: number; source: string; translation: string };
-
-function parseTranslation(raw: string) {
-  const cleaned = raw.replace(/```(?:json)?/g, "").trim();
-  const start = cleaned.indexOf("{");
-  const end = cleaned.lastIndexOf("}");
-  if (start >= 0 && end > start) {
-    try { return (JSON.parse(cleaned.slice(start, end + 1)) as { translation?: string }).translation || raw; } catch { /* use raw */ }
-  }
-  return raw;
-}
+const stages = [
+  { number: "01", title: "剪切音频", detail: "选取学习片段", active: true },
+  { number: "02", title: "提取内容", detail: "生成英文原文" },
+  { number: "03", title: "内容翻译", detail: "生成中英对照" },
+  { number: "04", title: "教学音频", detail: "定制学习模式" },
+];
 
 export default function Page() {
-  const fileRef = useRef<HTMLInputElement>(null);
-  const [fileName, setFileName] = useState("");
-  const [views, setViews] = useState<View[]>([]);
-  const [copied, setCopied] = useState(false);
-  const stt = useInferenceRun();
-  const translator = useInferenceRun();
-  const loading = stt.loading || translator.loading;
+  return <main className="site-shell">
+    <header className="topbar"><a className="brand" href="#top" aria-label="LinguaFlow 首页"><span className="brand-mark">L</span><span><b>Lingua</b>Flow</span></a><div className="top-note"><span className="status-dot" />英语听力学习工作台</div></header>
 
-  async function translateAudio() {
-    const file = fileRef.current?.files?.[0];
-    if (!file) return;
-    try {
-      const audioUri = await uploadFileThroughProxy(file);
-      const sttTask = await stt.run(STT_APP, { audio: audioUri });
-      const source = String((sttTask.output as { text?: string } | null)?.text || "").trim();
-      if (!source) throw new Error("没有识别到有效的语音内容");
-      const translationTask = await translator.run(TRANSLATE_APP, { text: source, system_prompt: TRANSLATE_PROMPT });
-      const raw = String((translationTask.output as { response?: string } | null)?.response || "").trim();
-      setViews([{ id: Date.now(), source, translation: parseTranslation(raw) }]);
-    } catch { /* errors are displayed by the hooks */ }
-  }
+    <section className="hero" id="top"><div className="hero-copy"><div className="eyebrow"><span>LISTEN</span><i /> <span>UNDERSTAND</span><i /> <span>LEARN</span></div><h1>把长音频，变成<br /><em>刚刚好的学习片段</em></h1><p>从你真正关心的几分钟开始。剪切、理解、翻译，再生成专属的双语教学音频。</p></div><div className="hero-note"><span>本阶段</span><strong>先完成音频剪切</strong><p>不识别内容，不调用 AI<br />等你验收后再进入下一步</p></div></section>
 
-  const error = stt.error || translator.error;
-  const current = views[0];
-  const outputText = current ? `${current.source}\n\n${current.translation}` : "";
+    <nav className="stage-nav" aria-label="学习音频制作流程">{stages.map((stage, index) => <div className={`stage-item ${stage.active ? "active" : "locked"}`} key={stage.number}><div className="stage-number">{stage.active ? stage.number : "⌑"}</div><div><strong>{stage.title}</strong><span>{stage.detail}</span></div>{index < stages.length - 1 && <i className="stage-line" />}</div>)}</nav>
 
-  async function copyResult() {
-    if (!outputText) return;
-    await navigator.clipboard.writeText(outputText);
-    setCopied(true);
-    window.setTimeout(() => setCopied(false), 1800);
-  }
+    <AudioClipper />
 
-  return (
-    <main className="app-shell">
-      <header className="topbar">
-        <div className="brand"><span className="brand-mark">文</span><span>LinguaFlow</span></div>
-        <div className="topbar-note"><span className="status-dot" /> AI 语音翻译</div>
-      </header>
+    <section className="future-section"><div className="future-heading"><span>接下来</span><h2>一段音频，逐步变成一堂听力课</h2><p>后续阶段已经为学习流程留好位置，本轮暂不开放。</p></div><div className="future-grid"><article><span className="future-icon">Aa</span><small>STEP 02 · 待开放</small><h3>提取英文内容</h3><p>将选中音频转为可编辑的英文原文，并提供文本下载。</p><b>等待本阶段验收后开放</b></article><article><span className="future-icon">译</span><small>STEP 03 · 待开放</small><h3>生成中文翻译</h3><p>逐句形成中英对照，方便理解语境、表达和句型。</p><b>等待内容提取完成</b></article><article><span className="future-icon">♪</span><small>STEP 04 · 待开放</small><h3>制作教学音频</h3><p>按你的模式组合中英文、语速、重复与单词讲解。</p><b>核心学习功能 · 后续开发</b></article></div></section>
 
-      <section className="hero">
-        <div className="eyebrow"><span>EN</span><span className="arrow">→</span><span>中</span> 音频翻译工作台</div>
-        <h1>让每一句话，<em>清晰相遇</em></h1>
-        <p>上传英语音频，AI 将为你提取内容并生成精准的中英文对照文本。</p>
-      </section>
-
-      <section className="workspace">
-        <div className="panel upload-panel">
-          <div className="panel-head"><div><span className="step">01</span><h2>上传音频</h2></div><span className="format-hint">MP3 · WAV · M4A</span></div>
-          <input ref={fileRef} className="file-input" type="file" accept="audio/*" disabled={loading} onChange={(e) => setFileName(e.target.files?.[0]?.name || "")} />
-          <button className={`dropzone ${fileName ? "has-file" : ""}`} type="button" onClick={() => fileRef.current?.click()} disabled={loading}>
-            <span className="upload-icon">↑</span>
-            {fileName ? <><strong>{fileName}</strong><small>点击重新选择文件</small></> : <><strong>点击选择或拖入音频文件</strong><small>支持最大 100 MB</small></>}
-          </button>
-          <button className="primary-btn" type="button" disabled={loading || !fileName} onClick={translateAudio}>
-            <span>{loading ? "正在处理…" : "开始翻译"}</span><span className="btn-arrow">→</span>
-          </button>
-          {error && <div className="error-box">{error}</div>}
-          <div className="privacy"><span>✦</span> 你的音频仅用于本次处理，我们不会保存原始文件</div>
-        </div>
-
-        <div className="panel result-panel">
-          <div className="panel-head"><div><span className="step">02</span><h2>中英对照</h2></div>{current && <button className="copy-btn" onClick={copyResult}>{copied ? "已复制 ✓" : "复制全文 ⧉"}</button>}</div>
-          {!current && !loading && <div className="empty-state"><div className="empty-art"><span>中</span><i>EN</i></div><strong>翻译结果将在这里呈现</strong><p>上传一段英语音频<br />开始你的第一次翻译</p></div>}
-          {loading && <div className="empty-state processing"><div className="loader" /><strong>{stt.loading ? "正在识别音频内容…" : "正在生成中文翻译…"}</strong><p>通常需要几秒钟，请耐心等待</p></div>}
-          {current && !loading && <div className="comparison"><div className="language-label"><span className="lang-tag en">EN</span><span>English transcript</span></div><div className="text-block source-text">{current.source}</div><div className="divider" /><div className="language-label"><span className="lang-tag zh">中</span><span>中文翻译</span></div><div className="text-block translation-text">{current.translation}</div></div>}
-        </div>
-      </section>
-      <footer><span>LINGUAFLOW <b>·</b> SIMPLE TRANSLATION</span><span>为沟通，少一点距离。</span></footer>
-    </main>
-  );
+    <section className="privacy-banner"><span>◈</span><div><strong>这一次练习，只属于当前页面</strong><p>无需登录，不保存项目。刷新页面后，原音频和剪切结果将被重置。</p></div></section>
+    <footer><div className="brand footer-brand"><span className="brand-mark">L</span><span><b>Lingua</b>Flow</span></div><span>少一点负担，多听懂一句。</span><span>Stage 01 · Audio clipping</span></footer>
+  </main>;
 }
