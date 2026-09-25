@@ -24,6 +24,7 @@ export default function LearningWorkbench() {
   const [transcript, setTranscript] = useState("");
   const [downloadUrl, setDownloadUrl] = useState("");
   const [copied, setCopied] = useState(false);
+  const [localError, setLocalError] = useState("");
   const stt = useInferenceRun();
 
   useEffect(() => () => { if (downloadUrl) URL.revokeObjectURL(downloadUrl); }, [downloadUrl]);
