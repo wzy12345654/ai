@@ -149,7 +149,13 @@ export default function AudioClipper() {
       if (region.id !== regionRef.current?.id) return;
       if (loopRef.current) region.play(); else { wave.pause(); setPlaying(false); }
     });
-    await wave.load(url);
+    try {
+      // 直接加载用户选择的 Blob，避免预览代理环境中 blob: URL 被二次 fetch 时失败。
+      await wave.loadBlob(nextFile);
+    } catch {
+      setError("浏览器无法读取这个音频。请确认文件未损坏，或转换为 MP3、WAV 后重试。");
+      setLoadingWave(false);
+    }
   }
 
   function chooseFile(event: ChangeEvent<HTMLInputElement>) {
