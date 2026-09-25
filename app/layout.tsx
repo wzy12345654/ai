@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "LinguaFlow · 英语音频翻译",
-  description: "上传英语音频，生成中英文对照文本。",
+  title: "LinguaFlow · 英语听力学习工作台",
+  description: "剪切英语音频，逐步制作属于你的双语听力课程。",
 };
 
 export default function RootLayout({

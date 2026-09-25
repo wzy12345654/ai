@@ -9,6 +9,9 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   allowedDevOrigins:
     process.env.LUFFY_PREVIEW_ORIGINS?.split(",").filter(Boolean) ?? [],
+  experimental: {
+    proxyClientMaxBodySize: "100mb",
+  },
 };
 
 export default nextConfig;
