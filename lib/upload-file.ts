@@ -2,34 +2,9 @@ type FileRecord = { uri?: string; upload_url?: string; remote_path?: string };
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-async function waitUntilReadable(uri: string) {
-  // PUT 完成后媒体入口存在短暂同步窗口。浏览器无法跨域读取其最终 OSS 重定向，
-  // 因此只确认媒体入口不再返回 404，再给后端留一小段传播时间。
-  for (let attempt = 0; attempt < 12; attempt++) {
-    try {
-      const response = await fetch(uri, {
-        method: "GET",
-        credentials: "include",
-        cache: "no-store",
-        redirect: "manual",
-      });
-      if (response.status !== 404 && response.status !== 503) {
-        await response.body?.cancel();
-        await sleep(1200);
-        return;
-      }
-    } catch {
-      // 跨域重定向在浏览器中可能表现为 fetch 失败；入口已命中时稍等后继续。
-      if (attempt >= 2) { await sleep(1200); return; }
-    }
-    await sleep(Math.min(750 * (attempt + 1), 4000));
-  }
-  throw new Error("音频上传后暂时无法读取，请稍后再次点击提取英文。");
-}
-
 /**
  * 通过 luffy proxy 调 inference.sh /files 拿预签名 upload_url, 再浏览器端直传 R2.
- * 返回 inference 侧识别的 uri (传给 runInference 的 image/audio 等 file 字段).
+ * 返回 inference 侧可直接识别的对象 URL。
  */
 export async function uploadFileThroughProxy(file: File): Promise<string> {
   const proxyUrl = process.env.NEXT_PUBLIC_INFERENCE_PROXY_URL;
@@ -65,9 +40,10 @@ export async function uploadFileThroughProxy(file: File): Promise<string> {
     body: file,
   });
   if (!put.ok) throw new Error(`上传文件失败: ${put.statusText || put.status}`);
-  await waitUntilReadable(record.uri);
-  // 媒体代理 URL 会再 302 到 OSS，部分上游下载器不跟随该跳转并误报 404。
-  // 直接返回模型可公开读取的最终对象地址，避免识别端的重定向兼容问题。
+
+  // 不在浏览器探测媒体 URL：最终 OSS 重定向未开放 CORS，会制造多条无意义的
+  // 控制台错误。PUT 已成功后仅留出对象存储传播时间，再把最终公开地址交给模型。
+  await sleep(1800);
   if (record.remote_path) {
     return `https://luffy-agent-platform.oss-cn-beijing.aliyuncs.com/inference-media/${record.remote_path}`;
   }
